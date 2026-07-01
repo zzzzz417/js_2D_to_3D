@@ -1,6 +1,6 @@
 const BACKGROUND = "#101010"
-const FRONTGROUND = "#50FF50"
-// const FRONTGROUND = "#fbee35"
+// const FRONTGROUND = "#50FF50"
+const FRONTGROUND = "#fbee35"
 import { vs, fs } from "./data.js";
 
 
@@ -13,6 +13,26 @@ const ctx = game.getContext("2d")
 console.log(game)
 // const game = document.getElementById("game") 
 console.log(ctx)
+
+let ppmCnt = 1
+
+
+function savePPM(outPath, canvas, ctx) {
+    const w = canvas.width, h = canvas.height;
+    const img = ctx.getImageData(0,0,w,h);
+    const buf = Buffer.alloc(w*h*3 + 20);
+    let off = buf.write(`P6\n${w} ${h}\n255\n`);
+    const d = img.data;
+    for(let i=0,p=0;i<d.length;i+=4){
+        buf[off++] = d[i];
+        buf[off++] = d[i+1];
+        buf[off++] = d[i+2];
+    }
+    fs.mkdirSync(path.dirname(outPath), {recursive:true});
+    fs.writeFileSync(outPath, buf);
+}
+
+
 
 function clear(){
     ctx.fillStyle = BACKGROUND
@@ -91,7 +111,6 @@ function farme(){
             )
         }
     }
-
     setTimeout(farme, 1000/FPS)
 }
 
